@@ -14,7 +14,7 @@ chrome_options = Options()
 # chrome_options.add_argument('--headless')  # Uncomment if you want to run Chrome in headless mode
 
 # Set the path to the chromedriver
-service = Service(executable_path="./chromedriver-mac-arm64/chromedriver")
+service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
 
 # Initialize the driver with the service object and options
 driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -26,7 +26,7 @@ driver.get("https://www.foxnews.com/category/us/crime")
 scraped_hrefs = []
 
 # Initialize the CSV file
-csv_file = open('urls.csv', 'w', newline='', encoding='utf-8')
+csv_file = open('data/urls_temp.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['URL'])  # Write the header
 
