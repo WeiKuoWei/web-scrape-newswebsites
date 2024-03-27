@@ -2,7 +2,7 @@ from newsplease import NewsPlease
 import json
 import csv
 
-def process_csv_to_json(file_path):
+def artticlestojson(file_path):
     # Initialize an empty list to store URLs from the CSV
     urls_list = []
 
