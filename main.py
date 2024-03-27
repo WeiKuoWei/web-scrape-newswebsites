@@ -5,10 +5,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import csv
+import time
 
-# Define Chrome options (if any)
+NUMBER_OF_URLS = 50
+
+# Define Chrome options
 chrome_options = Options()
-# chrome_options.add_argument('--headless') # Uncomment if you don't want the browser window to open
+# chrome_options.add_argument('--headless')  # Uncomment if you want to run Chrome in headless mode
 
 # Set the path to the chromedriver
 service = Service(executable_path="./chromedriver-mac-arm64/chromedriver")
@@ -19,21 +22,37 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 # Go to the desired website
 driver.get("https://www.foxnews.com/category/us/crime")
 
-# Wait for the articles to be loaded
-wait = WebDriverWait(driver, 10)
-articles = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'article h4.title a')))
+# Initialize an empty list to store the scraped hrefs
+scraped_hrefs = []
 
-# Extract href attributes
-hrefs = [article.get_attribute('href') for article in articles]
+# Initialize the CSV file
+csv_file = open('urls.csv', 'w', newline='', encoding='utf-8')
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(['URL'])  # Write the header
 
-# Save the hrefs to a CSV file
-with open('article_links.csv', 'w', newline='', encoding='utf-8') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['URL'])  # header row
-    for href in hrefs:
-        writer.writerow([href])  # data rows
+try:
+    while len(scraped_hrefs) < NUMBER_OF_URLS:
+        # Find all <h4> tags with class 'title' inside 'article' tags and get their 'href' attributes
+        articles = driver.find_elements(By.CSS_SELECTOR, 'article h4.title a')
+        for article in articles:
+            href = article.get_attribute('href')
+            if href not in scraped_hrefs:
+                scraped_hrefs.append(href)
+                csv_writer.writerow([href])  # Write to CSV file
 
-# Close the driver
-driver.quit()
+        # Check if we have 50 urls, if so break out of the loop
+        if len(scraped_hrefs) >= NUMBER_OF_URLS:
+            break
 
-print(f'Successfully saved {len(hrefs)} links to article_links.csv')
+        # Wait for the "Show More" button to be clickable and then click it
+        show_more_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.button.load-more.js-load-more a'))
+        )
+        driver.execute_script("arguments[0].click();", show_more_button)
+
+        # Wait for the page to load; adjust the sleep time if necessary
+        time.sleep(3)
+
+finally:
+    csv_file.close()
+    driver.quit()
