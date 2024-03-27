@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import csv
 import time
 
-NUMBER_OF_URLS = 50
+NUMBER_OF_URLS = 1000
 
 def getURLS():
     # Define Chrome options
@@ -27,7 +27,7 @@ def getURLS():
     scraped_hrefs = []
 
     # Initialize the CSV file
-    csv_file = open('data/urls_temp.csv', 'w', newline='', encoding='utf-8')
+    csv_file = open('data/urls.csv', 'w', newline='', encoding='utf-8')
     csv_writer = csv.writer(csv_file)
     csv_writer.writerow(['URL'])  # Write the header
 

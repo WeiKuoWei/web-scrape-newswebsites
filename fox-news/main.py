@@ -7,8 +7,8 @@ from cleaner import cleanURLS
 def main():
     # getURLS()
     # print("URLs have been scraped")
-    print("Cleaning URLs")
     cleanURLS()
+    print("URLs cleaned")
 
 
 if __name__ == "__main__":

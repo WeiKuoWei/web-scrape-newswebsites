@@ -17,5 +17,16 @@ def cleanURLS():
     df.loc[df['URL'].str.contains('video'), 'label'] = 'video'
     df.loc[~df['URL'].str.contains('video'), 'label'] = 'article'
 
+    article_count = df[df['label'] == 'article'].shape[0]
+
+    # prints the number of rows with the label 'article'
+    print("The number of articles is: {}, which is {}% of the total ({}/{})".format(
+    article_count,
+    round(article_count/number_of_rows*100, 2),
+    article_count,
+    number_of_rows
+    ))
+
+
     # save the dataframe to a new csv file
     df.to_csv('data/urls_cleaned.csv', index=False)
