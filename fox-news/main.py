@@ -13,7 +13,7 @@ def main():
     # # getURLS(NUMBER_OF_URLS)
     # print("URLs have been scraped")
     # end_time = time.time()
-    # print("Total time taken for scraping fox news: ", (end_time - current_time)*pow(10,6), "s")
+    # print("Total time taken for scraping fox news: ", (end_time - current_time), "s")
     # # cleanURLS()
     # print("URLs cleaned")
 
@@ -21,8 +21,12 @@ def main():
     articlestojson(FILE_PATH)
     print("Articles have been scraped")
     end_time = time.time()
-    print("Total time taken for scraping articles: ", (end_time - current_time)*pow(10,6), "s")
+    print("Total time taken for scraping articles: ", (end_time - current_time), "s")
 
 
 if __name__ == "__main__":
     main()
+
+
+# 1812 articles for 1761 seconds
+# roughly 25% of the urls are video urls
