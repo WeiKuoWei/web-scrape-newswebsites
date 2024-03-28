@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 
-def cleanURLS():
+def cleanURLS(filepath):
     # open the csv file from data
-    df = pd.read_csv('data/urls.csv')
+    df = pd.read_csv(filepath)
 
     # find the number of rows in the dataframe
     number_of_rows = df.shape[0]
@@ -31,4 +31,4 @@ def cleanURLS():
     df = df[df['label'] == 'article']
 
     # save the dataframe to a new csv file
-    df.to_csv('data/urls_cleaned.csv', index=False)
+    df.to_csv('../cnn-news/data/urls_cleaned.csv', index=False)
