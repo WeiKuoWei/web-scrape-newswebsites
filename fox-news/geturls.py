@@ -7,9 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import csv
 import time
 
-NUMBER_OF_URLS = 1000
 
-def getURLS():
+def getURLS(NUMBER_OF_URLS=1000):
     # Define Chrome options
     chrome_options = Options()
     # chrome_options.add_argument('--headless')  # Uncomment if you want to run Chrome in headless mode
@@ -52,7 +51,7 @@ def getURLS():
             driver.execute_script("arguments[0].click();", show_more_button)
 
             # Wait for the page to load; adjust the sleep time if necessary
-            time.sleep(3)
+            time.sleep(1)
 
     finally:
         csv_file.close()

@@ -27,6 +27,8 @@ def cleanURLS():
     number_of_rows
     ))
 
+    # drop the rows with the label 'video'
+    df = df[df['label'] == 'article']
 
     # save the dataframe to a new csv file
     df.to_csv('data/urls_cleaned.csv', index=False)
