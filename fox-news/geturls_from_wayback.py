@@ -28,7 +28,7 @@ def getURLS(file_path, export_csv_name):
     # Process the links
     processed_links = []        
     
-    for site in site_list[1:]:
+    for site in site_list:
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.get(site)
 
@@ -44,18 +44,12 @@ def getURLS(file_path, export_csv_name):
             processed_link = link[index:]
             processed_links.append(processed_link)
 
-        # Close the driver after you're done
-        driver.quit()
-
-        # pause the script for 5 seconds
-        time.sleep(5)
-
-    # Append the URLs to a CSV file
-    with open('data/' + export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        for link in processed_links:
-            csv_writer.writerow([link])
-        
+        # Append the URLs to a CSV file
+        with open('data/' + export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            for link in processed_links:
+                csv_writer.writerow([link])
+            
         # drop the duplicates 
         df = pd.read_csv('data/' + export_csv_name, header=None)
         df.drop_duplicates(subset=0, inplace=True)
@@ -64,3 +58,11 @@ def getURLS(file_path, export_csv_name):
         df = df[~df[0].str.contains('video')]
 
         df.to_csv('data/' + export_csv_name, index=False, header=None)
+
+        # Close the driver after you're done
+        driver.quit()
+
+        # pause the script for 5 seconds
+        time.sleep(10)
+
+    

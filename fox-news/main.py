@@ -31,7 +31,7 @@ def main():
         # updateTime("getArchiveURL")
 
         # get urls from fox news
-        getURLS("urls-wayback.csv", "urls_uncleaned")
+        getURLS("urls-wayback.csv", "urls_uncleaned.csv")
         updateTime("getURLS")
 
         # # clean urls
