@@ -1,28 +1,51 @@
-from geturls import getURLS
+import time
+import sys
+
+from geturls_from_wayback import getURLS
 from cleaner import cleanURLS
 from getarticles import articlestojson
-import time
+from wayback_machine import getArchiveURL
 
-FILE_PATH = 'data/urls_cleaned.csv'
-NUMBER_OF_URLS = 5000
+# FILE_PATH = 'data/urls_cleaned.csv'
+# NUMBER_OF_URLS = 5000
+URL_NAME = "https://www.foxnews.com/category/us/crime"
+START_YEAR = 2021
+END_YEAR = 2021
+
+current_time = time.time()
+
+def updateTime(function_name=""):
+    global current_time
+
+    end_time = time.time()
+    print("Total time taken for {0} : {1}s".format(function_name, (end_time - current_time)))
+    current_time = end_time
+
 
 def main():
-    # # save current time as integer
-    # current_time = time.time()
-    # print("Program has started")
-    # # getURLS(NUMBER_OF_URLS)
-    # print("URLs have been scraped")
-    # end_time = time.time()
-    # print("Total time taken for scraping fox news: ", (end_time - current_time), "s")
-    # # cleanURLS()
-    # print("URLs cleaned")
+    print("Program started")
+    
+    try:
+        # # get archive urls with wayback machine
+        # getArchiveURL(URL_NAME, START_YEAR, END_YEAR, "data/urls-wayback.csv")
+        # updateTime("getArchiveURL")
 
-    current_time = time.time()
-    articlestojson(FILE_PATH)
-    print("Articles have been scraped")
-    end_time = time.time()
-    print("Total time taken for scraping articles: ", (end_time - current_time), "s")
+        # get urls from fox news
+        getURLS("urls-wayback.csv", "urls_uncleaned.csv")
+        updateTime("getURLS")
 
+        # # clean urls
+        # cleanURLS("urls_uncleaned.csv", "urls_cleaned.csv")
+        # updateTime("cleanURLS")
+
+        # # get articles
+        # articlestojson("urls_cleaned.csv")
+        # updateTime("articlestojson")
+    
+    except Exception as e:
+        print("Error: ", e)
+
+    print("Program ended")
 
 if __name__ == "__main__":
     main()

@@ -30,7 +30,7 @@ def articlestojson(file_path, NUMBER_OF_URLS=10):
             articles_info[url] = None
 
     # Write the buffer (articles_info) to a JSON file
-    with open("articles_info.json", "w", encoding='utf-8') as file:
+    with open("data/" + file_path, "a", encoding='utf-8') as file:
         json.dump(articles_info, file, ensure_ascii=False, indent=4)
 
 # Example usage

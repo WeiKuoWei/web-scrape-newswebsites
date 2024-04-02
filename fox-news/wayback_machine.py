@@ -6,17 +6,6 @@ import os
 from calendar import monthrange
 from random import randint
 
-# site = sys.argv[1]
-# year = int(sys.argv[2])
-
-# site = "https://www.foxnews.com/category/us/crime"
-# year = 2023
-
-# file = open("{0}_{1}".format(site.replace("/","_"), year), "w")
-# file = open(sys.argv[3], "a")
-
-# file_path = '../fox-news/data/urls_wayback.csv'
-
 def getArchiveURL(site, start_year, end_year, file_path):
 
     file = open(file_path, "a")
