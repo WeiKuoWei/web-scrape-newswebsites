@@ -1,7 +1,8 @@
 .DS_Store
 *.pyc
-venv
-chromedriver-mac-arm64
 settings.json
 requirements.txt
+
+venv
+chromedriver-mac-arm64
 news-htmls
