@@ -13,7 +13,6 @@ import pandas as pd
 
 # Define Chrome options
 chrome_options = Options()
-chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox") # Bypass OS security model
 chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
