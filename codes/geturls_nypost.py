@@ -27,7 +27,7 @@ service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
 def getURLS(file_path, export_csv_name):
     # import the website link from a CSV called urls.csv
     site_list = ["https://nypost.com/us-news/"]
-    # with open("data/" + file_path, 'r', encoding='utf-8') as csv_file:
+    # with open("data/nypost/" + file_path, 'r', encoding='utf-8') as csv_file:
     #     csv_reader = csv.reader(csv_file)
     #     # next(csv_reader) # Skip the header if there is one
     #     for row in csv_reader:
@@ -51,24 +51,18 @@ def getURLS(file_path, export_csv_name):
             processed_links.append(processed_link)
 
         # Append the URLs to a CSV file
-        with open('data/' + export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
+        with open('data/nypost/' + export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
             csv_writer = csv.writer(csv_file)
             for link in processed_links:
                 csv_writer.writerow([link])
             
         # drop the duplicates 
-        df = pd.read_csv('data/' + export_csv_name, header=None)
+        df = pd.read_csv('data/nypost/' + export_csv_name, header=None)
         df.drop_duplicates(subset=0, inplace=True)
 
-        # drop the rows that contain the word 'video'
-        df = df[~df[0].str.contains('video')]
-
-        df.to_csv('data/' + export_csv_name, index=False, header=None)
+        df.to_csv('data/nypost/' + export_csv_name, index=False, header=None)
 
         # Close the driver after you're done
         driver.quit()
-
-        # pause the script for 5 seconds
-        time.sleep(10)
 
 getURLS("urls-wayback.csv", "urls_uncleaned.csv")
