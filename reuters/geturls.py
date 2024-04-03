@@ -32,14 +32,14 @@ def getURLS(file_path, export_csv_name):
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.get(site)
 
-        articles = WebDriverWait(driver, 20).until(
+        articles = WebDriverWait(driver, 5).until(
             EC.presence_of_all_elements_located((
                     By.CSS_SELECTOR, 
-                    'a[data-testid="Heading"]'
+                    'li[data-testid="four_columns"],li[data-testid="three_columns"]'
                 ))
             )
         
-        links = [article.get_attribute('href') for article in articles]
+        links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]
 
         for link in links:
             # Locate the index that contains 'https'
