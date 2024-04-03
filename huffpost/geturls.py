@@ -21,12 +21,16 @@ chrome_options.add_argument("--windox-size=800,600")
 
 # prefs = {"profile.managed_default_content_settings.images": 2} # 2: Block all images; 0: Show all images 
 # chrome_options.add_experimental_option("prefs", prefs)
+
+
 service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
 
 
 def getURLS(file_path, export_csv_name):
+    print("getURLS started")
+    start_time = time.time() 
     # import the website link from a CSV called urls.csv
-    site_list = ["https://nypost.com/us-news/"]
+    site_list = ["https://www.huffpost.com/news/us-news"]
     # with open("data/" + file_path, 'r', encoding='utf-8') as csv_file:
     #     csv_reader = csv.reader(csv_file)
     #     # next(csv_reader) # Skip the header if there is one
@@ -41,7 +45,12 @@ def getURLS(file_path, export_csv_name):
         driver.get(site)
 
         # Find all <h2> elements with the class "linkro-darkred" and extract the hrefs
-        articles = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'h3.story__headline.headline.headline--archive')))
+        articles = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((
+                By.CSS_SELECTOR, 
+                'div.zone__content div.card.card--standard.js-card'
+            ))
+        )
         links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]
 
         for link in links:
@@ -60,15 +69,12 @@ def getURLS(file_path, export_csv_name):
         df = pd.read_csv('data/' + export_csv_name, header=None)
         df.drop_duplicates(subset=0, inplace=True)
 
-        # drop the rows that contain the word 'video'
-        df = df[~df[0].str.contains('video')]
-
         df.to_csv('data/' + export_csv_name, index=False, header=None)
 
         # Close the driver after you're done
         driver.quit()
-
-        # pause the script for 5 seconds
-        time.sleep(10)
+    end_time = time.time()
+    print(f"Total time taken for getURLS: {end_time - start_time}s")
+    print("getURLS ended")
 
 getURLS("urls-wayback.csv", "urls_uncleaned.csv")

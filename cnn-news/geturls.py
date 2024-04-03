@@ -13,7 +13,14 @@ import time
 def getURLS(NUMBER_OF_URLS=1000):
     # Define Chrome options
     chrome_options = Options()
-    # chrome_options.add_argument('--headless')  # Uncomment if you want to run Chrome in headless mode
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+    chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--windox-size=800,600")
+
+# prefs = {"profile.managed_default_content_settings.images": 2} # 2: Block all images; 0: Show all images 
+# chrome_options.add_experimental_option("prefs", prefs)
 
     # Set the path to the chromedriver
     service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")

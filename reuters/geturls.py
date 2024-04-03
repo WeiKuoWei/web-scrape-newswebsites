@@ -13,10 +13,20 @@ import pandas as pd
 
 # Define Chrome options
 chrome_options = Options()
+# chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
+# chrome_options.add_argument("--disable-gpu") # slow the program down 
+# chrome_options.add_argument("--windox-size=800,600") # slow the program down
+
+# prefs = {"profile.managed_default_content_settings.images": 2} # 2: Block all images; 0: Show all images 
+# chrome_options.add_experimental_option("prefs", prefs)
 service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
 
 
 def getURLS(file_path, export_csv_name):
+    print("getURLS started")
+    start_time = time.time()
     # import the website link from a CSV called urls.csv
     site_list = ["https://www.reuters.com/world/us/"]
     # with open("data/" + file_path, 'r', encoding='utf-8') as csv_file:
@@ -26,20 +36,22 @@ def getURLS(file_path, export_csv_name):
     #         site_list.append(row[1])
 
     # Process the links
-    processed_links = []        
+    processed_links = []  
+   
     
     for site in site_list:
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.get(site)
 
-        articles = WebDriverWait(driver, 20).until(
-            EC.presence_of_all_elements_located((
-                    By.CSS_SELECTOR, 
-                    'a[data-testid="Heading"]'
-                ))
-            )
-        
-        links = [article.get_attribute('href') for article in articles]
+        articles = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((
+                By.CSS_SELECTOR, 
+                'li[data-testid="four_columns"],li[data-testid="three_columns"]'
+            ))
+        )
+        links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]
+
+    
 
         for link in links:
             # Locate the index that contains 'https'
@@ -57,15 +69,13 @@ def getURLS(file_path, export_csv_name):
         df = pd.read_csv('data/' + export_csv_name, header=None)
         df.drop_duplicates(subset=0, inplace=True)
 
-        # # drop the rows that contain the word 'video'
-        # df = df[~df[0].str.contains('video')]
-
         df.to_csv('data/' + export_csv_name, index=False, header=None)
 
         # Close the driver after you're done
         driver.quit()
 
-        # pause the script for 5 seconds
-        # time.sleep(10)
+        end_time = time.time()
+        print(f"getURLS finished in {end_time - start_time} seconds")
+
 
 getURLS("urls-wayback.csv", "urls_uncleaned.csv")

@@ -13,6 +13,7 @@ import pandas as pd
 
 # Define Chrome options
 chrome_options = Options()
+chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox") # Bypass OS security model
 chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
@@ -26,7 +27,7 @@ service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
 
 def getURLS(file_path, export_csv_name):
     # import the website link from a CSV called urls.csv
-    site_list = ["https://nypost.com/us-news/"]
+    site_list = ["https://www.nytimes.com/section/us"]
     # with open("data/" + file_path, 'r', encoding='utf-8') as csv_file:
     #     csv_reader = csv.reader(csv_file)
     #     # next(csv_reader) # Skip the header if there is one
@@ -41,7 +42,12 @@ def getURLS(file_path, export_csv_name):
         driver.get(site)
 
         # Find all <h2> elements with the class "linkro-darkred" and extract the hrefs
-        articles = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'h3.story__headline.headline.headline--archive')))
+        articles = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((
+                By.CSS_SELECTOR, 
+                'div.css-13mho3u li.css-18yolpw'
+            ))
+        )
         links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]
 
         for link in links:
