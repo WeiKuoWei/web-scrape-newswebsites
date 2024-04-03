@@ -4,3 +4,4 @@ venv
 chromedriver-mac-arm64
 settings.json
 requirements.txt
+news-htmls
