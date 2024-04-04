@@ -13,11 +13,11 @@ import pandas as pd
 
 # Define Chrome options
 chrome_options = Options()
-chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox") # Bypass OS security model
 chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
-chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument("--windox-size=800,600")
+# chrome_options.add_argument("--disable-gpu")
+# chrome_options.add_argument("--windox-size=800,600")
 
 # prefs = {"profile.managed_default_content_settings.images": 2} # 2: Block all images; 0: Show all images 
 # chrome_options.add_experimental_option("prefs", prefs)
@@ -26,7 +26,7 @@ service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
 
 def getURLS(file_path, export_csv_name):
     # import the website link from a CSV called urls.csv
-    site_list = ["https://www.bbc.com/news/us-canada"]
+    site_list = ["https://web.archive.org/web/20230102002508/https://www.bbc.com/news/world/us_and_canada"]
     # with open("data/bbc/" + file_path, 'r', encoding='utf-8') as csv_file:
     #     csv_reader = csv.reader(csv_file)
     #     # next(csv_reader) # Skip the header if there is one
@@ -44,7 +44,7 @@ def getURLS(file_path, export_csv_name):
         articles = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((
                 By.CSS_SELECTOR, 
-                'div[data-testid="liverpool-card"]'
+                'div.gs-o-media__body'
             ))
         )
         links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]

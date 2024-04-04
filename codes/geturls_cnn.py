@@ -7,46 +7,63 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import csv
 import time
+import pandas as pd
+
+
+
+# Define Chrome options
+chrome_options = Options()
+chrome_options = Options()
+# chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--windox-size=800,600")
+
+# prefs = {"profile.managed_default_content_settings.images": 2} # 2: Block all images; 0: Show all images 
+# chrome_options.add_experimental_option("prefs", prefs)
+service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
+
 
 def getURLS(file_path, export_csv_name):
-    chrome_options = Options()
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
-    chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--windox-size=800,600")
+    # import the website link from a CSV called urls.csv
+    site_list = ["https://edition.cnn.com/us"]
+    # with open("data/washingtontimes/" + file_path, 'r', encoding='utf-8') as csv_file:
+    #     csv_reader = csv.reader(csv_file)
+    #     # next(csv_reader) # Skip the header if there is one
+    #     for row in csv_reader:
+    #         site_list.append(row[1])
 
-    # prefs = {"profile.managed_default_content_settings.images": 2} # 2: Block all images; 0: Show all images 
-    # chrome_options.add_experimental_option("prefs", prefs)
-    service = Service(executable_path="../chromedriver-mac-arm64/chromedriver")
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-
-    site_list = []
-    with open(file_path, 'r', encoding='utf-8') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader:
-            site_list.append(row[1])  # Assuming URL is in the first column
-
-    processed_links = []
+    # Process the links
+    processed_links = []        
     
     for site in site_list:
+        driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.get(site)
-        try:
-            # Adjusted selector to match the specific element class
-            links_elements = WebDriverWait(driver, 10).until(
-                EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.container__link.container_lead-plus-headlines-with-images__link'))
-            )
-            links = [element.get_attribute('href') for element in links_elements]
-            processed_links.extend(links)
-            with open(export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
-                csv_writer = csv.writer(csv_file)
-                for link in processed_links:
-                    csv_writer.writerow([link])
-        except Exception as e:
-            print(f"Error processing site {site}: {e}")
 
-    driver.quit()
+        # Find all <h2> elements with the class "linkro-darkred" and extract the hrefs
+        articles = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div.stack')))
+        links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]
 
+        for link in links:
+            # Locate the index that contains 'https'
+            index = link.find('https')
+            processed_link = link[index:]
+            processed_links.append(processed_link)
 
+        # Append the URLs to a CSV file
+        with open('data/cnn/' + export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            for link in processed_links:
+                csv_writer.writerow([link])
+            
+        # drop the duplicates 
+        df = pd.read_csv('data/cnn/' + export_csv_name, header=None)
+        df.drop_duplicates(subset=0, inplace=True)
 
+        df.to_csv('data/cnn/' + export_csv_name, index=False, header=None)
+
+        # Close the driver after you're done
+        driver.quit()
+
+getURLS("urls-wayback.csv", "urls_uncleaned.csv")
