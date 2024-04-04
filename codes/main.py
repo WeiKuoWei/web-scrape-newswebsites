@@ -1,5 +1,6 @@
 import time
 import json
+import concurrent.futures
 import sys
 
 from geturls import getURLS
@@ -9,6 +10,7 @@ from wayback_machine import getArchiveURL
 
 START_YEAR = 2023
 END_YEAR = 2023
+current_time = time.time()
     
 def updateTime(function_name=""):
     global current_time
@@ -17,6 +19,9 @@ def updateTime(function_name=""):
     print("Total time taken for {0} : {1}s".format(function_name, (end_time - current_time)))
     current_time = end_time
 
+def fetch_urls(site):
+    getURLS("urls-wayback.csv", "urls_uncleaned.csv", site['name'], site['base_url'])
+    updateTime("getURLS for " + site['name'])
 
 def main():
     print("Program started")
@@ -29,20 +34,26 @@ def main():
         #     # get archive urls with wayback machine
         #     getArchiveURL(sites[i]['url'], START_YEAR, END_YEAR, "data/"+sites[i]['name']+"/urls-wayback.csv")
         #     updateTime("getArchiveURL")
-        
-        for i in range(8,10):
+
+        # single thread
+        for i in range(0,10):
             i = str(i)
-            getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'])
+            getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'], sites[i]['base_url'])
             updateTime("getURLS")
         
+        # # multi-thread attempt
+        # # Extract the site data for the first 10 sites
+        # site_data = [sites[str(i)] for i in range(4)]
 
-        # # clean urls
-        # cleanURLS(sites[1]+"urls_uncleaned.csv", sites[1]+"urls_cleaned.csv")
-        # updateTime("cleanURLS")
+        # # Use ThreadPoolExecutor to execute fetch_urls in parallel
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        #     executor.map(fetch_urls, site_data)
 
         # # get articles
-        # articlestojson(sites[1]+"/urls_cleaned.csv")
-        # updateTime("articlestojson")
+        # for i in range(0,10):
+        #     i = str(i)
+        #     articlestojson(sites[i]+"/urls_cleaned.csv")
+        #     updateTime("articlestojson")
     
     except Exception as e:
         print("Error: ", e)
