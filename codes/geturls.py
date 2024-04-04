@@ -11,8 +11,9 @@ import csv
 import time
 import pandas as pd
 import credentials
-config = credentials.get()
+import json
 
+config = credentials.get()
 API_KEY = config['SCRAPERAPI_KEY']
 
 proxy_options = {
@@ -22,23 +23,13 @@ proxy_options = {
   }
 }
 
-config = {
-    'apnews':'div.PageList-items div.PageList-items-item',
-    'bbc':'div[data-testid="liverpool-card"]',
-    'cnn':'div.stack', # need to double check
-    'dailymail':'h2.linkro-darkred',
-    'foxnews':'h4.title',
-    'huffpost':'div.zone__content div.card.card--standard.js-card',
-    'nypost':'h3.story__headline.headline.headline--archive',
-    'nytimes':'div.css-13mho3u li.css-18yolpw',
-    'reuters':'li[data-testid="four_columns"],li[data-testid="three_columns"]',
-    'washingtontimes':'h2.article-headline',
-}
+with open('sites.json', 'r') as f:
+        sites = json.load(f)
 
 
 def createDriver():
     chrome_options = webdriver.ChromeOptions()
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox") # Bypass OS security model
     chrome_options.add_argument("--disable-dev-shm-usage") # This flag is used to disable the use of the /dev/shm shared memory file system in Chrome.
     # chrome_options.add_argument("--disable-gpu")
@@ -48,46 +39,56 @@ def createDriver():
     driver = uc.Chrome(service=service, options=chrome_options, seleniumwire_options=proxy_options)
     return driver
 
-def getURLS(file_path, export_csv_name, site_name):
+def getURLS(file_path, export_csv_name, site_name, base_url):
     print("Getting URLs for:", site_name)
     # import the website link from a CSV called urls.csv
     site_list = []
+    site_index = []
     with open('data/'+site_name+'/'+file_path, 'r', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file)
         # next(csv_reader) # Skip the header if there is one
         for row in csv_reader:
             site_list.append(row[1])
+            site_index.append(row[0])
     try:
         # Remove wayback machine links from the urls
         processed_links = []  
-        for site in site_list:
+        for site in site_list[:1]:
+            start_time = time.time()
+
             driver = createDriver()
             driver.get(site)
 
-            # Find all <h2> elements with the class "linkro-darkred" and extract the hrefs
-            articles = WebDriverWait(driver, 10).until(
+            # find all <a> elements and extract the hrefs
+            articles  = WebDriverWait(driver, 30).until(
                 EC.presence_of_all_elements_located((
-                    By.CSS_SELECTOR, 
-                    config[site_name]
+                    By.CSS_SELECTOR,
+                    'a'
                 ))
             )
-            links = [article.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for article in articles]
-
+            links = [article.get_attribute('href') for article in articles]
         
             for link in links:
+                if link is None:
+                    continue
                 # Locate the index that contains 'https'
-                print(link)
-                index = link.find('https')
-                processed_link = link[index:]
+                index_start = link.find('https')
+                processed_link = link[index_start:]
                 processed_links.append(processed_link)
+                print(processed_link)
 
             # Close the driver after you're done
             driver.quit()
+            end_time = time.time()
+
+            # print the index of the site
+            print("Finishing scraping for:", site_index[site_list.index(site)])
+            print("Total time taken for {0} : {1}s".format(site_index[site_list.index(site)], (end_time - start_time)))
 
     except Exception as e:
         print("Error: ", e)
 
-
+    start_time = time.time()
     # Append the URLs to a CSV file
     with open('data/'+site_name+'/'+export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
         csv_writer = csv.writer(csv_file)
@@ -97,4 +98,32 @@ def getURLS(file_path, export_csv_name, site_name):
     # drop the duplicates 
     df = pd.read_csv('data/'+site_name+'/'+export_csv_name, header=None)
     df.drop_duplicates(subset=0, inplace=True)
+
+    # drop the rows that contain less than 10 characters
+    df = df[df[0].str.len() > 10]
+
+    # if row does not contain base url, drop the row
+    df = df[df[0].str.contains(base_url)]
+
+    # sort the row by length in ascending order
+    df['length'] = df[0].str.len()
+    df = df.sort_values(by='length', ascending=True)
+
+    # drop the temporary column
+    df = df.drop(columns=['length'])
+    
     df.to_csv('data/'+site_name+'/'+export_csv_name, index=False, header=None)
+    end_time = time.time()
+    print()
+    print("Total time taken for {0} : {1}s".format("processing the csv file", (end_time - start_time)))
+
+for i in range(9,10):
+    i = str(i)
+    getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'], sites[i]['base_url'])
+
+'''
+approach one didn't work since most sites have frequent updates and changes
+need to figure out a general approach to get the urls
+
+didn't work for washington post
+'''
