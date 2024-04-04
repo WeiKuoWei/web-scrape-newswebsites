@@ -39,23 +39,58 @@ def createDriver():
     driver = uc.Chrome(service=service, options=chrome_options, seleniumwire_options=proxy_options)
     return driver
 
+def cleanURLS(processed_links, export_csv_name, site_name, base_url):
+    # drop the duplicates 
+    df = pd.read_csv('data/'+site_name+'/'+export_csv_name, header=None)
+    df.drop_duplicates(subset=0, inplace=True)
+    # drop the rows that contain less than 10 characters
+    df = df[df[0].str.len() > 10]
+    # if row does not contain base url, drop the row
+    df = df[df[0].str.contains(base_url)]
+    # sort the row by length in ascending order
+    df['length'] = df[0].str.len()
+    df = df.sort_values(by='length', ascending=True)
+    # drop the temporary column
+    df = df.drop(columns=['length'])
+    
+    df.to_csv('data/'+site_name+'/'+export_csv_name, index=False, header=None)
+
+# def getURLS(file_path, export_csv_name, site_name, base_url):
+#     # mark the row as processed
+#     df = pd.read_csv('data/' + site_name + '/' + file_path, header=None, encoding='utf-8')
+
+#     # Find the row corresponding to the site and mark it as processed
+#     unique_identifier = 20230102002508
+#     df.loc[df[0] == unique_identifier, 2] = 'yes'  
+
+#     # Write the modified DataFrame back to the CSV file
+#     df.to_csv('data/' + site_name + '/' + file_path, index=False, header=None, encoding='utf-8')
+
+# getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites["0"]['name'], sites["0"]['base_url'])
+    
 def getURLS(file_path, export_csv_name, site_name, base_url):
     print("Getting URLs for:", site_name)
     # import the website link from a CSV called urls.csv
     site_list = []
     site_index = []
+    site_status = []
     with open('data/'+site_name+'/'+file_path, 'r', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file)
         # next(csv_reader) # Skip the header if there is one
         for row in csv_reader:
             site_list.append(row[1])
             site_index.append(row[0])
-    try:
-        # Remove wayback machine links from the urls
-        processed_links = []  
-        for site in site_list[:1]:
-            start_time = time.time()
+            site_status.append(row[2])
 
+    # Remove wayback machine links from the urls
+    processed_links = []  
+    for site in site_list:
+        # check if the row has been processed
+        if site_status[site_list.index(site)] == 'yes':
+            continue
+
+        start_time = time.time()
+        try:
             driver = createDriver()
             driver.get(site)
 
@@ -85,45 +120,43 @@ def getURLS(file_path, export_csv_name, site_name, base_url):
             print("Finishing scraping for:", site_index[site_list.index(site)])
             print("Total time taken for {0} : {1}s".format(site_index[site_list.index(site)], (end_time - start_time)))
 
-    except Exception as e:
-        print("Error: ", e)
+            # mark the row as processed
+            df = pd.read_csv('data/' + site_name + '/' + file_path, header=None, encoding='utf-8')
 
-    start_time = time.time()
-    # Append the URLs to a CSV file
-    with open('data/'+site_name+'/'+export_csv_name, 'a', newline='', encoding='utf-8') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        for link in processed_links:
-            csv_writer.writerow([link])
-        
-    # drop the duplicates 
-    df = pd.read_csv('data/'+site_name+'/'+export_csv_name, header=None)
-    df.drop_duplicates(subset=0, inplace=True)
+            # Find the row and modify the third column to 'yes'
+            identifier = int(site_index[site_list.index(site)])
+            df.loc[df[0] == identifier, 2] = 'yes'
+            
+            # Write the modified DataFrame back to the CSV file
+            df.to_csv('data/' + site_name + '/' + file_path, index=False, header=None, encoding='utf-8')
 
-    # drop the rows that contain less than 10 characters
-    df = df[df[0].str.len() > 10]
+            # clean the urls
+            start_time = time.time()
+            cleanURLS(processed_links, export_csv_name, site_name, base_url)
+            end_time = time.time()
+            print("Total time taken for {0} : {1}s".format("cleanURLS", (end_time - start_time)))    
 
-    # if row does not contain base url, drop the row
-    df = df[df[0].str.contains(base_url)]
+            # pause 10 seconds
+            time.sleep(10)
 
-    # sort the row by length in ascending order
-    df['length'] = df[0].str.len()
-    df = df.sort_values(by='length', ascending=True)
+        except Exception as e:
+            print("Error: ", e)
+            # mark the row as failed
+            df = pd.read_csv('data/' + site_name + '/' + file_path, header=None, encoding='utf-8')
 
-    # drop the temporary column
-    df = df.drop(columns=['length'])
-    
-    df.to_csv('data/'+site_name+'/'+export_csv_name, index=False, header=None)
-    end_time = time.time()
-    print()
-    print("Total time taken for {0} : {1}s".format("processing the csv file", (end_time - start_time)))
+            # Find the row and modify the third column to 'yes'
+            identifier = int(site_index[site_list.index(site)])
+            df.loc[df[0] == identifier, 2] = 'fail'
+            
+            # Write the modified DataFrame back to the CSV file
+            df.to_csv('data/' + site_name + '/' + file_path, index=False, header=None, encoding='utf-8')
 
-for i in range(9,10):
-    i = str(i)
-    getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'], sites[i]['base_url'])
+
+# for i in range(9,10):
+#     i = str(i)
+#     getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'], sites[i]['base_url'])
 
 '''
 approach one didn't work since most sites have frequent updates and changes
 need to figure out a general approach to get the urls
-
-didn't work for washington post
 '''
