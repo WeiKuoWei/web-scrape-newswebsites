@@ -2,7 +2,6 @@
 .env
 *.pyc
 settings.json
-requirements.txt
 
 venv
 chromedriver-mac-arm64
