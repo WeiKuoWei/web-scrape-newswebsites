@@ -45,7 +45,7 @@ def cleanURLS(processed_links, export_csv_name, site_name, base_url):
         writer = csv.writer(file)
         for link in processed_links:
             writer.writerow([link])
-            
+
     # drop the duplicates 
     df = pd.read_csv('data/'+site_name+'/'+export_csv_name, header=None)
     df.drop_duplicates(subset=0, inplace=True)
@@ -61,18 +61,6 @@ def cleanURLS(processed_links, export_csv_name, site_name, base_url):
     
     df.to_csv('data/'+site_name+'/'+export_csv_name, index=False, header=None)
 
-# def getURLS(file_path, export_csv_name, site_name, base_url):
-#     # mark the row as processed
-#     df = pd.read_csv('data/' + site_name + '/' + file_path, header=None, encoding='utf-8')
-
-#     # Find the row corresponding to the site and mark it as processed
-#     unique_identifier = 20230102002508
-#     df.loc[df[0] == unique_identifier, 2] = 'yes'  
-
-#     # Write the modified DataFrame back to the CSV file
-#     df.to_csv('data/' + site_name + '/' + file_path, index=False, header=None, encoding='utf-8')
-
-# getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites["0"]['name'], sites["0"]['base_url'])
     
 def getURLS(file_path, export_csv_name, site_name, base_url):
     print("Getting URLs for:", site_name)
