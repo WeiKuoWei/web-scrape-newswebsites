@@ -5,7 +5,7 @@ import csv
 
 # NUMBER_OF_URLS = 10
 
-def articlestojson(file_path, NUMBER_OF_URLS=10):
+def articlestojson(file_path):
     # Initialize an empty list to store URLs from the CSV
     urls_list = []
 
@@ -20,9 +20,9 @@ def articlestojson(file_path, NUMBER_OF_URLS=10):
     articles_info = {}
 
     # Iterate over each URL, fetching the article data and storing it in the buffer
-    for url in urls_list[:-1]:
+    for url in urls_list:
         try:
-            article = NewsPlease.from_url(url, timeout=5)
+            article = NewsPlease.from_url(url, timeout=1)
             # Use the URL as the key and the article's serializable dictionary as the value
             articles_info[url] = article.get_serializable_dict() if article else None
         except Exception as e:

@@ -1,8 +1,8 @@
 .DS_Store
+.env
 *.pyc
 settings.json
-requirements.txt
 
 venv
 chromedriver-mac-arm64
-news-htmls
+local_resource
