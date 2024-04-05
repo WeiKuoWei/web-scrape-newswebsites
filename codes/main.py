@@ -8,10 +8,11 @@ from getarticles import articlestojson
 from wayback_machine import getArchiveURL
 
 
-START_YEAR = 2023
-END_YEAR = 2023
+# START_YEAR = 2023
+# END_YEAR = 2023
 current_time = time.time()
-    
+site_list = ["bbc", "cnn","foxnews","nationalreview","nytimes"]    
+
 def updateTime(function_name=""):
     global current_time
 
@@ -30,16 +31,28 @@ def main():
         sites = json.load(f)
         
     try:
-        # for i in range(5,6):
-        #     # get archive urls with wayback machine
-        #     getArchiveURL(sites[i]['url'], START_YEAR, END_YEAR, "data/"+sites[i]['name']+"/urls-wayback.csv")
-        #     updateTime("getArchiveURL")
+        for site in site_list:
+            url_num = len(sites[site]['url'])
+            for i in range(url_num):
+                i = str(i)
+                url_link = sites[site]['url'][i]["link"]
+                start_year = sites[site]['url'][i]["start_year"]
+                end_year = sites[site]['url'][i]["end_year"]
+                export_csv_name = "data/"+site+"/urls-wayback.csv"
 
-        # single thread
-        for i in range(0,10):
-            i = str(i)
-            getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'], sites[i]['base_url'])
-            updateTime("getURLS")
+                # get archive urls with wayback machine
+                getArchiveURL(url_link, start_year, end_year, export_csv_name)
+                
+                # print("Getting archive urls for", url_link, "from", start_year, "to", end_year)
+                # print("Exporting to", export_csv_name)
+
+                updateTime("getArchiveURL")
+
+        # # single thread
+        # for i in range(0,10):
+        #     i = str(i)
+        #     getURLS("urls-wayback.csv", "urls_uncleaned.csv", sites[i]['name'], sites[i]['base_url'])
+        #     updateTime("getURLS")
         
         # # multi-thread attempt
         # # Extract the site data for the first 10 sites

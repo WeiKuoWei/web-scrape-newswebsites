@@ -1,58 +1,67 @@
 {
-    "0":{
-        "name":"bbc",
-        "url":"https://www.bbc.com/news/us-canada",
+    "bbc":{
+        "url":{
+            "0":{
+                "link":"http://www.bbc.com/news/world/us_and_canada/",
+                "start_year":2013,
+                "end_year":2023
+            }
+        },
         "base_url":"www.bbc.com/"
     },
-    "1":{
-        "name":"cnn",
-        "url":"https://cnn.com/us",
+    "cnn":{
+        "url":{
+            "0":{
+                "link":"https://cnn.com/us",
+                "start_year":2013,
+                "end_year":2023
+            }
+        },
         "base_url":"cnn.com/"
     },
-    "2":{
-        "name":"dailymail",
-        "url":"https://www.dailymail.co.uk/ushome/index.html",
-        "base_url":"www.dailymail.co.uk/"
-    },
-    "3":{
-        "name":"foxnews",
-        "url":"https://www.foxnews.com/category/us",
+    "foxnews":{
+        "url":{
+            "0":{
+                "link":"http://www.foxnews.com/us/index.html",
+                "start_year":2013,
+                "end_year":2019
+            },
+            "1":{
+                "link":"https://www.foxnews.com/category/us",
+                "start_year":2018,
+                "end_year":2023
+            }
+        },
         "base_url":"www.foxnews.com/"
     },
-    "4":{
-        "name":"huffpost",
-        "url":"https://www.huffpost.com/news/us-news",
-        "base_url":"www.huffpost.com/"
-    },
-    "5":{
-        "name":"nypost",
-        "url":"https://nypost.com/us-news/",
-        "base_url":"nypost.com/"
-
-    },
-    "6":{
-        "name":"nytimes",
-        "url":"https://www.nytimes.com/section/us",
+    "nytimes":{
+        "url":{
+            "0":{
+                "link":"http://www.nytimes.com/pages/national/index.html",
+                "start_year":2013,
+                "end_year":2016
+            },
+            "1":{
+                "link":"https://www.nytimes.com/section/us",
+                "start_year":2015,
+                "end_year":2023
+            }
+        },
         "base_url":"www.nytimes.com/"
     },
-    "7":{
-        "name":"reuters",
-        "url":"https://www.reuters.com/world/us/",
-        "base_url":"www.reuters.com/"
-    },
-    "8":{
-        "name":"washingtonpost",
-        "url":"https://www.washingtonpost.com/national/",
-        "base_url":"www.washingtonpost.com/"
-    },
-    "9":{
-        "name":"washingtontimes",
-        "url":"https://www.washingtontimes.com/news/national/",
-        "base_url":"www.washingtontimes.com/"
-    },
-    "20":{
-        "name":"apnews",
-        "url":"https://apnews.com/us-news",
-        "base_url":"apnews.com/"
+    "nationalreview":{
+        "url":{
+            "0":{
+                "link":"https://www.nationalreview.com/",
+                "start_year":2013,
+                "end_year":2018
+            },
+            "1":{
+                "link":"https://www.nationalreview.com/us/",
+                "start_year":2018,
+                "end_year":2023
+            }
+        },
+        "base_url":"www.nationalreview.com/"
     }
 }
