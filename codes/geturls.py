@@ -40,6 +40,12 @@ def createDriver():
     return driver
 
 def cleanURLS(processed_links, export_csv_name, site_name, base_url):
+    # export the processed links to a CSV
+    with open('data/'+site_name+'/'+export_csv_name, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        for link in processed_links:
+            writer.writerow([link])
+            
     # drop the duplicates 
     df = pd.read_csv('data/'+site_name+'/'+export_csv_name, header=None)
     df.drop_duplicates(subset=0, inplace=True)
