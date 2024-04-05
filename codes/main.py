@@ -83,20 +83,5 @@ if __name__ == "__main__":
 # notes
 
 '''
-apnews:
-- 2023 1/1-6/26 all have the same urls
-- 2023 only has 136 unique urls
-- https://apnews.com/hub/us-news was the url used from 2020/09-2023/06
-- https://apnews.com/us-news is the new one from 2023/06
-- consider finding a substitute for this news website
-
-rerun nypost
-- only has urls from 2024/02-2024/03
-- consider finding a substitute for this news website
-
-bbc:
-- https://www.bbc.com/news/us-canada is the new website from 2024
-- https://www.bbc.com/news/world/us_and_canada is the one used from 2012-2023
-
 
 '''
