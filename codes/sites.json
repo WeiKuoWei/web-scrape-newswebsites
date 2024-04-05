@@ -2,57 +2,57 @@
     "0":{
         "name":"bbc",
         "url":"https://www.bbc.com/news/us-canada",
-        "base_url":"https://www.bbc.com/"
+        "base_url":"www.bbc.com/"
     },
     "1":{
         "name":"cnn",
-        "url":"https://edition.cnn.com/us",
-        "base_url":"https://edition.cnn.com/"
+        "url":"https://cnn.com/us",
+        "base_url":"cnn.com/"
     },
     "2":{
         "name":"dailymail",
         "url":"https://www.dailymail.co.uk/ushome/index.html",
-        "base_url":"https://www.dailymail.co.uk/"
+        "base_url":"www.dailymail.co.uk/"
     },
     "3":{
         "name":"foxnews",
         "url":"https://www.foxnews.com/category/us",
-        "base_url":"https://www.foxnews.com/"
+        "base_url":"www.foxnews.com/"
     },
     "4":{
         "name":"huffpost",
         "url":"https://www.huffpost.com/news/us-news",
-        "base_url":"https://www.huffpost.com/"
+        "base_url":"www.huffpost.com/"
     },
     "5":{
         "name":"nypost",
         "url":"https://nypost.com/us-news/",
-        "base_url":"https://nypost.com/"
+        "base_url":"nypost.com/"
 
     },
     "6":{
         "name":"nytimes",
         "url":"https://www.nytimes.com/section/us",
-        "base_url":"https://www.nytimes.com/"
+        "base_url":"www.nytimes.com/"
     },
     "7":{
         "name":"reuters",
         "url":"https://www.reuters.com/world/us/",
-        "base_url":"https://www.reuters.com/"
+        "base_url":"www.reuters.com/"
     },
     "8":{
         "name":"washingtonpost",
         "url":"https://www.washingtonpost.com/national/",
-        "base_url":"https://www.washingtonpost.com/"
+        "base_url":"www.washingtonpost.com/"
     },
     "9":{
         "name":"washingtontimes",
         "url":"https://www.washingtontimes.com/news/national/",
-        "base_url":"https://www.washingtontimes.com/"
+        "base_url":"www.washingtontimes.com/"
     },
     "20":{
         "name":"apnews",
         "url":"https://apnews.com/us-news",
-        "base_url":"https://apnews.com/"
+        "base_url":"apnews.com/"
     }
 }

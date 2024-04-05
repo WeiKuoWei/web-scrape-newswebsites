@@ -100,8 +100,9 @@ def getURLS(file_path, export_csv_name, site_name, base_url):
             for link in links:
                 if link is None:
                     continue
-                # Locate the index that contains 'https'
-                index_start = link.find('https')
+                # Locate the index that starts after 5 and that contains 'https' 
+                new_link = link[5:]
+                index_start = new_link.find('http')
                 processed_link = link[index_start:]
                 processed_links.append(processed_link)
                 print(processed_link)
