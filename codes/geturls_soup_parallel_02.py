@@ -48,10 +48,10 @@ def updateCSV(import_file_path, id, status):
 
 def insertURLS(processed_links, export_file_path, base_url, id):
     # export the processed links to a CSV
-    with open(export_file_path, 'w', newline='', encoding='utf-8') as file:
+    with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for link in processed_links:
-            link = id + ',' + link
+            link = "{0},{1}".format(str(id), link)
             writer.writerow([link])
 
 def cleanURLS(export_file_path, base_url):
@@ -61,10 +61,10 @@ def cleanURLS(export_file_path, base_url):
     df.drop_duplicates(subset=0, inplace=True)
 
     # if row does not contain base url, drop the row
-    df = df[df[0].str.contains(base_url)]
+    df = df[df[1].str.contains(base_url)]
 
     # sort the row by length in ascending order
-    df['length'] = df[0].str.len()
+    df['length'] = df[1].str.len()
     df = df.sort_values(by='length', ascending=True)
 
     # drop the temporary column
