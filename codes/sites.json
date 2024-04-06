@@ -7,7 +7,7 @@
                 "end_year":2023
             }
         },
-        "base_url":"www.bbc.com/"
+        "base_url":"bbc.com/"
     },
     "cnn":{
         "url":{
@@ -32,7 +32,7 @@
                 "end_year":2023
             }
         },
-        "base_url":"www.foxnews.com/"
+        "base_url":"foxnews.com/"
     },
     "nytimes":{
         "url":{
@@ -47,7 +47,7 @@
                 "end_year":2023
             }
         },
-        "base_url":"www.nytimes.com/"
+        "base_url":"nytimes.com/"
     },
     "nationalreview":{
         "url":{
@@ -62,6 +62,6 @@
                 "end_year":2023
             }
         },
-        "base_url":"www.nationalreview.com/"
+        "base_url":"nationalreview.com/"
     }
 }
