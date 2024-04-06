@@ -18,11 +18,11 @@ import pandas as pd
 # # save the cleaned dataframe to urls_cleaned.csv
 # df.to_csv('urls_cleaned.csv', header=None, index=False)
 
-df = pd.read_csv('urls_uncleaned.csv', header=None, encoding='utf-8')
+df = pd.read_csv('urls-wayback.csv', header=None, encoding='utf-8')
 
 # if the row only contains one column, insert a new column to index 0 with 0 as the value
-for i in range(len(df)):
-    if len(df.iloc[i]) == 1:
-        df.iloc[i] = [0] + df.iloc[i].tolist()
+for i in range(2371, len(df)):
+    # change the third column to 'no'
+    df.loc[i, 2] = 'no'
 
-df.to_csv('urls_uncleaned.csv', header=None, index=False)
+df.to_csv('urls-wayback.csv', header=None, index=False)
