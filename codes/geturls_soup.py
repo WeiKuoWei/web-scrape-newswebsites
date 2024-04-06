@@ -11,11 +11,16 @@ config = credentials.get()
 API_KEY = config['SCRAPERAPI_KEY']
 current_time = time.time()
 
-proxy_options = {
-  'proxy': {
-    "http": f"scraperapi:{API_KEY}@proxy-server.scraperapi.com:8001",
-    "https": f"scraperapi:{API_KEY}@proxy-server.scraperapi.com:8001"
-  }
+# proxy_options = {
+#   'proxy': {
+#     "http": f"scraperapi:{API_KEY}@proxy-server.scraperapi.com:8001",
+#     "https": f"scraperapi:{API_KEY}@proxy-server.scraperapi.com:8001"
+#   }
+# }
+
+proxies = {
+    "http": f"http://scraperapi:{API_KEY}@proxy-server.scraperapi.com:8001",
+    "https": f"https://scraperapi:{API_KEY}@proxy-server.scraperapi.com:8001"
 }
 
 with open('sites.json', 'r') as f:
@@ -28,13 +33,15 @@ def timer():
     current_time = end_time
     return end_time - temp_time
 
-def updateCSV(import_file_path, index, status):
+def updateCSV(import_file_path, id, status):
+    print("Updating CSV file")
+    print(import_file_path, id, status)
     # mark the row as processed
     df = pd.read_csv(import_file_path, header=None, encoding='utf-8')
 
-    # fine the row with index and modify the third column to status
-    df.loc[df[0] == index, 2] = status
-    
+    # find the row with id and modify the third column to status
+    df.loc[df[0] == id, 2] = status
+
     # Write the modified DataFrame back to the CSV file
     df.to_csv(import_file_path, index=False, header=None, encoding='utf-8')
 
@@ -71,19 +78,19 @@ def getURLS(import_csv_name, export_csv_name, site_name, base_url):
 
     # import the website link from a CSV called urls.csv
     site_list = []
-    site_index = []
+    site_id = []
     site_status = []
     with open(import_file_path, 'r', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file)
         # next(csv_reader) # Skip the header if there is one
         for row in csv_reader:
-            site_index.append(row[0])
+            site_id.append(int(row[0])) # id is type int
             site_list.append(row[1])
             site_status.append(row[2])
 
     # Remove wayback machine links from the urls
     processed_links = []  
-    for index, site, status in zip(site_index[:10], site_list[:10], site_status[:10]):
+    for id, site, status in zip(site_id, site_list, site_status):
         # check if the row has been processed
         if status == 'yes':
             continue
@@ -91,23 +98,22 @@ def getURLS(import_csv_name, export_csv_name, site_name, base_url):
         try:
             # request with beautifulsoup and scraperapi
             url = site
-            response = requests.get(url, proxies=proxy_options['proxy']) # might need to specify the proxy option
+            # response = requests.get(url, proxies=proxy_options['proxy']) # might need to specify the proxy option
+            response = requests.get(url, proxies=proxies)
             soup = BeautifulSoup(response.text, 'html.parser')
 
             # find all the urls
-            links = []
-            for link in soup.find_all('a'):
-                links.append(link.get('href'))
+            links = [a['href'] for a in soup.find_all('a', href=True)]
         
             for link in links:
                 if link is None or len(link) < 10:
                     continue
 
                 try:
-                    # Locate the index that starts after 5 and that contains 'http' 
+                    # Locate the id that starts after 5 and that contains 'http' 
                     new_link = link[5:]
-                    index_start = new_link.find('http')
-                    processed_link = link[index_start:]
+                    id_start = new_link.find('http')
+                    processed_link = new_link[id_start:]
                     processed_links.append(processed_link)
                     print(processed_link)
 
@@ -115,19 +121,22 @@ def getURLS(import_csv_name, export_csv_name, site_name, base_url):
                     print("Website url does not contain 'http': ", link)
                     continue
 
-            # print the index of the site
-            print(f"Finishing scraping for: {0} takes {1}", site, timer())
-            updateCSV(import_csv_name, site_name, index, 'yes')
+            # print the id of the site
+            print(f"Finishing scraping for: {site} takes {timer():.2f}")
+
+            updateCSV(import_file_path, id, 'yes')
             
 
             # clean the urls
             cleanURLS(processed_links, export_file_path, base_url)
-            print(f"Cleaning urls for {0} takes {1}", site, timer())
+            print(f"Cleaning urls for {site} takes {timer():.2f}")
 
 
-        except:
-            print(f"Fail to get urls for {0}", site)
-            updateCSV(import_csv_name, site_name, index, 'fail')
+        except Exception as e:
+            print(e)
+            print(f"Fail to get urls for {site}")
+            updateCSV(import_file_path, id, 'fail')
             continue
 
-getURLS("urls-wayback.csv", "urls_uncleaned.csv", "foxnews", sites["foxnews"]['base_url'])
+# getURLS("urls-wayback.csv", "urls_uncleaned.csv", "foxnews", sites["foxnews"]['base_url'])
+# updateCSV("data/foxnews/urls-wayback.csv", 20230101110821, 'yes')
