@@ -48,7 +48,7 @@ def updateCSV(import_file_path, id, status):
 
 async def cleanURLS(processed_links, export_file_path, base_url):
     # export the processed links to a CSV
-    with open(export_file_path, 'w', newline='', encoding='utf-8') as file:
+    with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for link in processed_links:
             writer.writerow([link])
