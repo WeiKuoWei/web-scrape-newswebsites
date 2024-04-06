@@ -21,7 +21,7 @@ def getArchiveURL(site, start_year, end_year, file_path):
                         response = eval(requests.get(request_url).content.decode('utf-8').replace("true","True"))
 
                         print (day, month, response["archived_snapshots"]["closest"]["url"])
-                        file.write("{0},{1}\n".format(response["archived_snapshots"]["closest"]["timestamp"], response["archived_snapshots"]["closest"]["url"]))
+                        file.write("{0},{1},{2}\n".format(response["archived_snapshots"]["closest"]["timestamp"], response["archived_snapshots"]["closest"]["url"]),"no")
                         break
                     except:
                         print ('MISSING', day, month, year)
@@ -32,8 +32,5 @@ def getArchiveURL(site, start_year, end_year, file_path):
     # open the csv file from data and remove duplicates
     df = pd.read_csv(file_path, header=None)
     df.drop_duplicates(subset=0, inplace=True)
-
-    # add a third column, no, to the csv file
-    df[2] = 'no'
     df.to_csv(file_path, index=False, header=None)
 

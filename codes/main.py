@@ -38,10 +38,10 @@ def main():
                 url_link = sites[site]['url'][i]["link"]
                 start_year = sites[site]['url'][i]["start_year"]
                 end_year = sites[site]['url'][i]["end_year"]
-                export_csv_name = "data/"+site+"/urls-wayback.csv"
+                export_csv_path = "data/"+site+"/urls-wayback.csv"
 
                 # get archive urls with wayback machine
-                getArchiveURL(url_link, start_year, end_year, export_csv_name)
+                getArchiveURL(url_link, start_year, end_year, export_csv_path)
                 
                 # print("Getting archive urls for", url_link, "from", start_year, "to", end_year)
                 # print("Exporting to", export_csv_name)
