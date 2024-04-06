@@ -52,10 +52,8 @@ def main():
         for site in site_list:
             try:
                 getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
-                cleanURLS("data/"+site+"/urls_uncleaned.csv", sites[site]['base_url'])
             except Exception as e:
                 print("Error: ", e, "; finishing using scraperapi credits")
-                cleanURLS("data/"+site+"/urls_uncleaned.csv", sites[site]['base_url'])
 
         # # multi-thread attempt using ProcessPoolExecutor
         # single thread

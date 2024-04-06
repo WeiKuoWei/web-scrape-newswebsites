@@ -46,30 +46,31 @@ def updateCSV(import_file_path, id, status):
     # Write the modified DataFrame back to the CSV file
     df.to_csv(import_file_path, index=False, header=None, encoding='utf-8')
 
-def insertURLS(processed_links, export_file_path, base_url, id):
+def insertURLS(processed_links, export_file_path, id):
     # export the processed links to a CSV
     with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for link in processed_links:
-            link = "{0},{1}".format(id, link)
-            writer.writerow([link])
+            writer.writerow([id, link])
 
 def cleanURLS(export_file_path, base_url):
     df = pd.read_csv(export_file_path, header=None)
 
-    # drop the duplicates 
-    df.drop_duplicates(subset=0, inplace=True)
+    # Drop the duplicates
+    df.drop_duplicates(subset=[1], inplace=True)  # Assuming the second column has index 1
 
-    # if row does not contain base url, drop the row
-    df = df[df[1].str.contains(base_url)]
+    # Drop rows where the second column does not contain the base URL
+    df = df[df[1].str.contains(base_url, na=False)]
 
-    # sort the row by length in ascending order
+    # Drop rows where the length of the second column is shorter than 10 characters
+    df = df[df[1].str.len() >= 10]
+
+    # Sort rows based on the length of the second column in ascending order
     df['length'] = df[1].str.len()
-    df = df.sort_values(by='length', ascending=True)
+    df.sort_values(by='length', ascending=True, inplace=True)
+    df.drop(columns=['length'], inplace=True)  # Drop the temporary length column
 
-    # drop the temporary column
-    df = df.drop(columns=['length'])
-    
+    # Write the cleaned DataFrame back to the CSV file
     df.to_csv(export_file_path, index=False, header=None)
 
     
@@ -135,7 +136,8 @@ async def main(import_csv_name, export_csv_name, site_name, base_url):
                 
 
                 # clean the urls
-                insertURLS(processed_links, export_file_path, base_url, id)
+                insertURLS(processed_links, export_file_path, id)
+                cleanURLS(export_file_path, base_url)
                 print(f"Cleaning urls for {site} takes {timer():.2f}")
 
 
