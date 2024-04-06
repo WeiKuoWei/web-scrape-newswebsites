@@ -51,7 +51,7 @@ def insertURLS(processed_links, export_file_path, base_url, id):
     with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for link in processed_links:
-            link = "{0},{1}".format(str(id), link)
+            link = "{0},{1}".format(id, link)
             writer.writerow([link])
 
 def cleanURLS(export_file_path, base_url):
