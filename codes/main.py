@@ -6,7 +6,7 @@ import pandas as pd
 
 # from geturls import getURLS
 # from geturls_soup import getURLS
-from geturls_soup_parallel_02 import getURLS
+from geturls_soup_parallel_02 import getURLS, cleanURLS
 from getarticles import articlestojson
 from wayback_machine import getArchiveURL
 
@@ -51,6 +51,8 @@ def main():
 
         for site in site_list:
             getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
+            cleanURLS("data/"+site+"/urls_uncleaned.csv", sites[site]['base_url'])
+
             updateTime("getURLS for " + site)
 
         # # multi-thread attempt using ProcessPoolExecutor

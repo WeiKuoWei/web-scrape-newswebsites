@@ -46,7 +46,7 @@ def updateCSV(import_file_path, id, status):
     # Write the modified DataFrame back to the CSV file
     df.to_csv(import_file_path, index=False, header=None, encoding='utf-8')
 
-def cleanURLS(processed_links, export_file_path, base_url, id):
+def insertURLS(processed_links, export_file_path, base_url, id):
     # export the processed links to a CSV
     with open(export_file_path, 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
@@ -54,6 +54,7 @@ def cleanURLS(processed_links, export_file_path, base_url, id):
             link = id + ',' + link
             writer.writerow([link])
 
+def cleanURLS(export_file_path, base_url):
     df = pd.read_csv(export_file_path, header=None)
 
     # drop the duplicates 
@@ -134,7 +135,7 @@ async def main(import_csv_name, export_csv_name, site_name, base_url):
                 
 
                 # clean the urls
-                cleanURLS(processed_links, export_file_path, base_url, id)
+                insertURLS(processed_links, export_file_path, base_url, id)
                 print(f"Cleaning urls for {site} takes {timer():.2f}")
 
 
