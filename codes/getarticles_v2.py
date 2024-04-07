@@ -43,8 +43,6 @@ def fetch_articles_in_threads(site, num_threads=5):
                 continue
             site_data.append(row)
     
-    site_data = site_data[:20] # remove later
-
     # Split URLs among threads
     chunk_size = len(site_data) // num_threads + 1
     threads = []
