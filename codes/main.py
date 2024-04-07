@@ -5,7 +5,7 @@ import sys
 import pandas as pd
 # from geturls import getURLS
 # from geturls_soup import getURLS
-from geturls_soup_parallel_02 import getURLS, cleanURLS
+from geturls_soup_parallel_02 import getURLS
 from getarticles import articlestojson
 from wayback_machine import getArchiveURL
 

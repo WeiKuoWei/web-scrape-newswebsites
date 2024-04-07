@@ -76,7 +76,7 @@ def cleanURLS(export_file_path, base_url):
     
 async def main(import_csv_name, export_csv_name, site_name, base_url):
     print("Getting URLs for:", site_name)
-
+    time.sleep(10)
     import_file_path = 'data/' + site_name + '/' + import_csv_name
     export_file_path = 'data/' + site_name + '/' + export_csv_name
 
@@ -153,5 +153,5 @@ async def activator(import_csv_name, export_csv_name, site_name, base_url):
 def getURLS(import_csv_name, export_csv_name, site_name, base_url):
     asyncio.run(activator(import_csv_name, export_csv_name, site_name, base_url))
     
-# getURLS("urls-wayback.csv", "urls_uncleaned.csv", "foxnews", sites["foxnews"]['base_url'])
+getURLS("urls-wayback.csv", "urls_uncleaned.csv", "cnn", sites["cnn"]['base_url'])
 # updateCSV("data/foxnews/urls-wayback.csv", 20230101110821, 'yes')
