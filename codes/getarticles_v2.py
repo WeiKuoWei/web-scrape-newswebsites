@@ -65,7 +65,6 @@ def fetch_articles_in_threads(site, num_threads=5):
     for thread in threads:
         all_articles = {}
         for site_id, url, article, status in thread.articles:
-            print(f"site_id: {site_id}, url: {url}, status: {status}")
             df.loc[df[1] == url, 2] = status
             all_articles[url] = article
             # Write article to JSON if successfully fetched
