@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from log_tracker import exportLog
 import requests
 import aiohttp
 import asyncio
@@ -130,21 +131,26 @@ async def main(import_csv_name, export_csv_name, site_name, base_url):
                         continue
 
                 # print the id of the site
-                print(f"Finishing scraping for: {site} takes {timer():.2f}")
-
+                scrape_time = timer()
+                print(f"Finishing scraping for: {site} takes {scrape_time:.2f}")
+                
                 updateCSV(import_file_path, id, 'yes')
                 
 
                 # clean the urls
+                clean_time = timer()
                 insertURLS(processed_links, export_file_path, id)
                 cleanURLS(export_file_path, base_url)
-                print(f"Cleaning urls for {site} takes {timer():.2f}")
+                print(f"Cleaning urls for {site} takes {clean_time:.2f}")
 
+                # save info to log.csv
+                exportLog(id, "log_"+site_name+".csv", scrape_time, clean_time, 'yes')
 
             except Exception as e:
                 print(e)
                 print(f"Fail to get urls for {site}")
                 updateCSV(import_file_path, id, 'fail')
+                exportLog(id, "log_"+site_name+".csv", None, None, 'fail')
                 continue
 
 async def activator(import_csv_name, export_csv_name, site_name, base_url):
