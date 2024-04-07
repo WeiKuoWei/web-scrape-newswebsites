@@ -5,8 +5,9 @@ import sys
 import pandas as pd
 # from geturls import getURLS
 # from geturls_soup import getURLS
+
 from geturls_soup_parallel_02 import getURLS
-from getarticles import articlestojson
+# from getarticles import articlestojson
 from wayback_machine import getArchiveURL
 
 
@@ -15,6 +16,10 @@ from wayback_machine import getArchiveURL
 current_time = time.time()
 site_list = ["bbc", "cnn","foxnews","nationalreview","nytimes"]    
 
+# Load the data from the JSON file
+with open('sites.json', 'r') as f:
+    sites = json.load(f)
+
 def updateTime(function_name=""):
     global current_time
 
@@ -22,15 +27,18 @@ def updateTime(function_name=""):
     print("Total time taken for {0} : {1}s".format(function_name, (end_time - current_time)))
     current_time = end_time
 
-# def fetch_urls(site):
-#     getURLS("urls-wayback.csv", "urls_uncleaned.csv", site['name'], site['base_url'])
-#     updateTime("getURLS for " + site['name'])
+def fetch_urls(site):
+    global sites
+    print(site, sites[site]['base_url'])
+    try:        
+        print(f"Processing site: {site}", flush=True)  # Debugging print statement
+        getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
+        updateTime("getURLS for " + site)
+    except Exception as e:
+        print("Error: ", e)
 
 def main():
     print("Program started")
-    # Load the data from the JSON file
-    with open('sites.json', 'r') as f:
-        sites = json.load(f)
         
     try:
         # # wayback machine
@@ -48,30 +56,35 @@ def main():
                 
         #         updateTime("getArchiveURL")
 
-        for site in site_list:
+        # for site in site_list[1:]:
+        #     try:
+        #         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
+        #     except Exception as e:
+        #         print("Error: ", e, "; finishing using scraperapi credits")
+
+        # multi-thread attempt using ThreadPoolExecutor
+        while True:
+            flag = False
             try:
-                getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
+                for site in site_list:
+                    df = pd.read_csv("data/"+site+"/urls-wayback.csv", header=None, encoding='utf-8')
+                    # if the third column contains entries that are not yes, set flag to True
+                    if len(df.columns) >= 3 and ("no" in df[2].values or "fail" in df[2].values):
+                        flag = True
+                        break
+
             except Exception as e:
-                print("Error: ", e, "; finishing using scraperapi credits")
+                print("Error: ", e)
+                flag = True
 
-        # # multi-thread attempt using ProcessPoolExecutor
-        # single thread
-        # while True:
-        #     flag = False
-        #     for site in site_list:
-        #         df = pd.to_csv("data/"+site+"/urls-wayback.csv")
-        #         # if the third column contains entries that are not yes, set flag to True
-        #         if "no" in df[2].values or "fail" in df[2].values:
-        #             flag = True
-        #             break
-        #     if flag:
-        #         # use ProcessPoolExecutor to execute fetch_urls in parallel
-        #         with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
-        #             executor.map(fetch_urls, site_list)
-        #         updateTime("getURLS")
+            if flag:
+                # use ProcessPoolExecutor to execute fetch_urls in parallel
+                with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                    executor.map(fetch_urls, site_list)
+                updateTime("Finish getURLS")
 
-        #     else:
-        #         break
+            else:
+                break
 
         # # get articles
         # for i in range(0,10):
