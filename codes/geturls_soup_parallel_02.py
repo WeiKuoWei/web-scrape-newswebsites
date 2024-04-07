@@ -123,7 +123,7 @@ async def main(import_csv_name, export_csv_name, site_name, base_url):
                         id_start = new_link.find('http')
                         processed_link = new_link[id_start:]
                         processed_links.append(processed_link)
-                        print(processed_link)
+                        # print(processed_link)
 
                     except:
                         print("Website url does not contain 'http': ", link)
