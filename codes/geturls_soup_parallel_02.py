@@ -51,7 +51,7 @@ def insertURLS(processed_links, export_file_path, id):
     with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for link in processed_links:
-            writer.writerow([id, link])
+            writer.writerow([id, link, 'no'])
 
 def cleanURLS(export_file_path, base_url):
     df = pd.read_csv(export_file_path, header=None)
