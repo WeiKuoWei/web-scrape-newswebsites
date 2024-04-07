@@ -31,7 +31,7 @@ def fetch_urls(site):
     global sites
     print(site, sites[site]['base_url'])
     try:        
-        print(f"Processing site: {site}", flush=True)  # Debugging print statement
+        # print(f"Processing site: {site}", flush=True)  # Debugging print statement
         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
         updateTime("getURLS for " + site)
     except Exception as e:
@@ -56,7 +56,7 @@ def main():
                 
         #         updateTime("getArchiveURL")
 
-        # for site in site_list[1:]:
+        # for site in site_list[2:3]:
         #     try:
         #         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
         #     except Exception as e:

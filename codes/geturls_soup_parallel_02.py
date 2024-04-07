@@ -63,6 +63,9 @@ def cleanURLS(export_file_path, base_url):
     # Drop rows where the second column does not contain the base URL
     df = df[df[1].str.contains(base_url, na=False)]
 
+    # Drop rows that contain /video/ in the second column
+    df = df[~df[1].str.contains('/video/', na=False)]
+
     # Drop rows where the length of the second column is shorter than 10 characters
     df = df[df[1].str.len() >= 10]
 
