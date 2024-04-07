@@ -27,7 +27,7 @@ proxies = {
 with open('sites.json', 'r') as f:
         sites = json.load(f)
 
-async def timer():
+def timer():
     global current_time
     temp_time = current_time
     end_time = time.time()
@@ -46,32 +46,35 @@ def updateCSV(import_file_path, id, status):
     # Write the modified DataFrame back to the CSV file
     df.to_csv(import_file_path, index=False, header=None, encoding='utf-8')
 
-async def cleanURLS(processed_links, export_file_path, base_url):
+def insertURLS(processed_links, export_file_path, id):
     # export the processed links to a CSV
     with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for link in processed_links:
-            writer.writerow([link])
+            writer.writerow([id, link])
 
+def cleanURLS(export_file_path, base_url):
     df = pd.read_csv(export_file_path, header=None)
 
-    # drop the duplicates 
-    df.drop_duplicates(subset=0, inplace=True)
+    # Drop the duplicates
+    df.drop_duplicates(subset=[1], inplace=True)  # Assuming the second column has index 1
 
-    # if row does not contain base url, drop the row
-    df = df[df[0].str.contains(base_url)]
+    # Drop rows where the second column does not contain the base URL
+    df = df[df[1].str.contains(base_url, na=False)]
 
-    # sort the row by length in ascending order
-    df['length'] = df[0].str.len()
-    df = df.sort_values(by='length', ascending=True)
+    # Drop rows where the length of the second column is shorter than 10 characters
+    df = df[df[1].str.len() >= 10]
 
-    # drop the temporary column
-    df = df.drop(columns=['length'])
-    
+    # Sort rows based on the length of the second column in ascending order
+    df['length'] = df[1].str.len()
+    df.sort_values(by='length', ascending=True, inplace=True)
+    df.drop(columns=['length'], inplace=True)  # Drop the temporary length column
+
+    # Write the cleaned DataFrame back to the CSV file
     df.to_csv(export_file_path, index=False, header=None)
 
     
-async def getURLS(import_csv_name, export_csv_name, site_name, base_url):
+async def main(import_csv_name, export_csv_name, site_name, base_url):
     print("Getting URLs for:", site_name)
 
     import_file_path = 'data/' + site_name + '/' + import_csv_name
@@ -91,68 +94,69 @@ async def getURLS(import_csv_name, export_csv_name, site_name, base_url):
 
     # Remove wayback machine links from the urls
     processed_links = []  
-    for id, site, status in zip(site_id, site_list, site_status):
-        # check if the row has been processed
-        if status == 'yes':
-            continue
-
-        try:
-            # request with beautifulsoup and scraperapi
-            url = site
-            # response = requests.get(url, proxies=proxy_options['proxy']) # might need to specify the proxy option
-            response = requests.get(url, proxies=proxies)
-            soup = BeautifulSoup(response.text, 'html.parser')
-
-            # find all the urls
-            links = [a['href'] for a in soup.find_all('a', href=True)]
-        
-            for link in links:
-                if link is None or len(link) < 10:
-                    continue
-
-                try:
-                    # Locate the id that starts after 5 and that contains 'http' 
-                    new_link = link[5:]
-                    id_start = new_link.find('http')
-                    processed_link = new_link[id_start:]
-                    processed_links.append(processed_link)
-                    print(processed_link)
-
-                except:
-                    print("Website url does not contain 'http': ", link)
-                    continue
-
-            # print the id of the site
-            print(f"Finishing scraping for: {site} takes {timer():.2f}")
-
-            updateCSV(import_file_path, id, 'yes')
-            
-
-            # clean the urls
-            cleanURLS(processed_links, export_file_path, base_url)
-            print(f"Cleaning urls for {site} takes {timer():.2f}")
-
-
-        except Exception as e:
-            print(e)
-            print(f"Fail to get urls for {site}")
-            updateCSV(import_file_path, id, 'fail')
-            continue
-
-async def processTask(sites, site_list):
     async with aiohttp.ClientSession() as session:
-        tasks = []
-        for site in sites:
-            # Adjust the file paths as needed for each site
-            file_path = f'data/{site["name"]}/urls.csv'
-            export_csv_name = f'data/{site["name"]}/export.csv'
-            tasks.append(getURLS(session, file_path, export_csv_name, site['name'], site['base_url']))
-        await asyncio.gather(*tasks)
+        for id, site, status in zip(site_id, site_list, site_status):
+            # check if the row has been processed
+            if status == 'yes':
+                continue
 
-def getURLS_parallel(sites, site_list):
-    print("Getting URLs for all sites")
-    asyncio.run(processTask(sites, site_list))
- 
-                   
+            try:
+                # add timeout timer 10-15s
+                # request with beautifulsoup and scraperapi
+                url = site
+                if 'http' in url[:5]:
+                    async with session.get(url, proxy = proxies['http']) as response:
+                        soup = BeautifulSoup(await response.text(), 'html.parser')
+                else:
+                    async with session.get(url, proxy = proxies['https']) as response:
+                        soup = BeautifulSoup(await response.text(), 'html.parser')
+
+                # find all the urls
+                links = [a['href'] for a in soup.find_all('a', href=True)]
+            
+                for link in links:
+                    if link is None or len(link) < 10:
+                        continue
+
+                    try:
+                        # Locate the id that starts after 5 and that contains 'http' 
+                        new_link = link[5:]
+                        id_start = new_link.find('http')
+                        processed_link = new_link[id_start:]
+                        processed_links.append(processed_link)
+                        print(processed_link)
+
+                    except:
+                        print("Website url does not contain 'http': ", link)
+                        continue
+
+                # create log list tags for the site including the id, scraping time
+                # cleaning time, url, success or not, if not success, scraping time as MAX, cleaning time as NA
+                # print the id of the site
+                # take time of the scraping
+                print(f"Finishing scraping for: {site} takes {timer():.2f}")
+
+                updateCSV(import_file_path, id, 'yes')
+                
+
+                # clean the urls
+                # take time of cleaning the urls
+                insertURLS(processed_links, export_file_path, id)
+                cleanURLS(export_file_path, base_url)
+                print(f"Cleaning urls for {site} takes {timer():.2f}")
+
+
+            except Exception as e:
+                print(e)
+                print(f"Fail to get urls for {site}")
+                updateCSV(import_file_path, id, 'fail')
+                continue
+
+async def activator(import_csv_name, export_csv_name, site_name, base_url):
+    await main(import_csv_name, export_csv_name, site_name, base_url)
+
+def getURLS(import_csv_name, export_csv_name, site_name, base_url):
+    asyncio.run(activator(import_csv_name, export_csv_name, site_name, base_url))
+    
 # getURLS("urls-wayback.csv", "urls_uncleaned.csv", "foxnews", sites["foxnews"]['base_url'])
 # updateCSV("data/foxnews/urls-wayback.csv", 20230101110821, 'yes')
