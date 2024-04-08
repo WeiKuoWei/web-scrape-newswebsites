@@ -7,7 +7,7 @@ import pandas as pd
 # from geturls_soup import getURLS
 
 from geturls_soup_parallel_02 import getURLS
-# from getarticles import articlestojson
+from getarticles_v2 import fetch_articles_in_threads
 from wayback_machine import getArchiveURL
 
 
@@ -37,6 +37,14 @@ def fetch_urls(site):
     except Exception as e:
         print("Error: ", e)
 
+def fetch_articles(site):
+    global sites
+    try:
+        fetch_articles_in_threads(site, num_threads=5)
+        updateTime("fetch_articles_in_threads for " + site)
+    except Exception as e:
+        print("Error: ", e)
+
 def main():
     print("Program started")
         
@@ -62,35 +70,34 @@ def main():
         #     except Exception as e:
         #         print("Error: ", e, "; finishing using scraperapi credits")
 
-        # multi-thread attempt using ThreadPoolExecutor
-        while True:
-            flag = False
-            try:
-                for site in site_list:
-                    df = pd.read_csv("data/"+site+"/urls-wayback.csv", header=None, encoding='utf-8')
-                    # if the third column contains entries that are not yes, set flag to True
-                    if len(df.columns) >= 3 and ("no" in df[2].values or "fail" in df[2].values):
-                        flag = True
-                        break
+        # # multi-thread using ThreadPoolExecutor
+        # while True:
+        #     flag = False
+        #     try:
+        #         for site in site_list:
+        #             df = pd.read_csv("data/"+site+"/urls-wayback.csv", header=None, encoding='utf-8')
+        #             # if the third column contains entries that are not yes, set flag to True
+        #             if len(df.columns) >= 3 and ("no" in df[2].values or "fail" in df[2].values):
+        #                 flag = True
+        #                 break
 
-            except Exception as e:
-                print("Error: ", e)
-                flag = True
+        #     except Exception as e:
+        #         print("Error: ", e)
+        #         flag = True
 
-            if flag:
-                # use ProcessPoolExecutor to execute fetch_urls in parallel
-                with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-                    executor.map(fetch_urls, site_list)
-                updateTime("Finish getURLS")
+        #     if flag:
+        #         # use ProcessPoolExecutor to execute fetch_urls in parallel
+        #         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        #             executor.map(fetch_urls, site_list)
+        #         updateTime("Finish getURLS")
 
-            else:
-                break
+        #     else:
+        #         break
 
-        # # get articles
-        # for i in range(0,10):
-        #     i = str(i)
-        #     articlestojson(sites[i]+"/urls_cleaned.csv")
-        #     updateTime("articlestojson")
+        # get articles
+        for site in site_list:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                executor.map(fetch_articles, site)
     
     except Exception as e:
         print("Error: ", e)

@@ -90,5 +90,5 @@ def fetch_articles_in_threads(site, num_threads=5):
     # Update the CSV with the status of article retrieval
     df.to_csv("data/"+site+"/urls_cleaned.csv", header=False, index=False, encoding='utf-8')
 
-# Example usage
-fetch_articles_in_threads("bbc", num_threads=5)
+# # Example usage
+# fetch_articles_in_threads("bbc", num_threads=5)
