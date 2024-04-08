@@ -12,6 +12,9 @@ df = df[~df[1].str.contains('/live/')]
 # drop the all rows that contains live-report
 df = df[~df[1].str.contains('live-report')]
 
+df = df[~df[1].str.contains('/av/')]
+
+
 # sort the rows based on the value of the first column in ascending order
 df.sort_values(by=0, ascending=True, inplace=True)
 
