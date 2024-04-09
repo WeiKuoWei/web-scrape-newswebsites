@@ -19,7 +19,7 @@ class ArticleFetcher(Thread):
         for row in self.site_data:
             site_id, url, status = row
             # print site_id, url, status
-            # print(f"site_id: {site_id}, url: {url}, status: {status}")
+            print(f"site_name: {self.site}; site_id: {site_id}")
             try:
                 article = NewsPlease.from_url(url, timeout=10)  # Adjusted timeout
                 if article:
@@ -28,7 +28,7 @@ class ArticleFetcher(Thread):
                     article_dict["wayback_id"] = site_id
                     self.articles.append((site_id, url, article_dict, 'yes'))
                 else:
-                    self.articles.append((site_id, url, None, 'yes'))
+                    self.articles.append((site_id, url, None, 'none'))
             except Exception as e:
                 print(f"Error fetching article for URL {url}: {e}")
                 self.articles.append((site_id, url, None, 'fail'))
@@ -91,4 +91,4 @@ def fetch_articles_in_threads(site, num_threads=5):
     df.to_csv("data/"+site+"/urls_cleaned.csv", header=False, index=False, encoding='utf-8')
 
 # # Example usage
-# fetch_articles_in_threads("bbc", num_threads=5)
+# fetch_articles_in_threads("cnn", num_threads=5)

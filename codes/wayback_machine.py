@@ -25,7 +25,7 @@ def getArchiveURL(site, start_year, end_year, file_path):
                         break
                     except:
                         print ('MISSING', day, month, year)
-                        pass
+                        break
 
     file.close()
 
@@ -33,4 +33,5 @@ def getArchiveURL(site, start_year, end_year, file_path):
     df = pd.read_csv(file_path, header=None)
     df.drop_duplicates(subset=0, inplace=True)
     df.to_csv(file_path, index=False, header=None)
+
 
