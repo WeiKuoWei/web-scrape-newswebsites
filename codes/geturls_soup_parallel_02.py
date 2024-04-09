@@ -49,10 +49,14 @@ def updateCSV(import_file_path, id, status):
 
 def insertURLS(processed_links, export_file_path, id):
     # export the processed links to a CSV
-    with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        for link in processed_links:
-            writer.writerow([id, link, 'no'])
+    try:
+        with open(export_file_path, 'a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            for link in processed_links:
+                writer.writerow([id, link, 'no'])
+    except Exception as e:
+        print(e)
+        print("Fail to write to CSV file")
 
 def cleanURLS(export_file_path, base_url):
     df = pd.read_csv(export_file_path, header=None)
@@ -80,7 +84,6 @@ def cleanURLS(export_file_path, base_url):
     
 async def main(import_csv_name, export_csv_name, site_name, base_url):
     print("Getting URLs for:", site_name)
-    time.sleep(10)
     import_file_path = 'data/' + site_name + '/' + import_csv_name
     export_file_path = 'data/' + site_name + '/' + export_csv_name
 
