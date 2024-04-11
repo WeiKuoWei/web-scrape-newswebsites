@@ -12,9 +12,9 @@ df = df[~df[1].str.contains("/topic/")]
 df = df[~df[1].str.contains("web.archive.org")]
 df = df[~df[1].str.contains("//subscribe")]
 df = df[~df[1].str.contains("about-newsweek")]
-# df = df[~df[1].str.contains("/travel/")]
-# df = df[~df[1].str.contains("/health/")]
-# df = df[~df[1].str.contains("/entertainment/")]
+df = df[~df[1].str.contains("/issue.html")]
+df = df[~df[1].str.contains("//subscription")]
+df = df[~df[1].str.contains("/newsletter/")]
 
 # sorting and duplicate removal
 df["length"] = df[1].str.len()
