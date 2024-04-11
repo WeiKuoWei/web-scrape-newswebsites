@@ -165,5 +165,5 @@ async def activator(import_csv_name, export_csv_name, site_name, base_url):
 def getURLS(import_csv_name, export_csv_name, site_name, base_url):
     asyncio.run(activator(import_csv_name, export_csv_name, site_name, base_url))
     
-getURLS("urls-wayback.csv", "urls_uncleaned.csv", "bbc", sites["cnn"]['base_url'])
+# getURLS("urls-wayback.csv", "urls_uncleaned.csv", "bbc", sites["cnn"]['base_url'])
 # updateCSV("data/foxnews/urls-wayback.csv", 20230101110821, 'yes')
