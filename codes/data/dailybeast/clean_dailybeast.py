@@ -5,17 +5,17 @@ df = pd.read_csv('urls_uncleaned.csv', header=None, encoding='utf-8')
 
 # positive filtering
 df = df[df[1].str.len() >= 10]
-df = df[df[1].str.contains("us")]
+# df = df[df[1].str.contains("us")]
 
 # negative filtering
-df = df[~df[1].str.contains("/video.")]
-df = df[~df[1].str.contains("/latino.")]
-df = df[~df[1].str.contains("/sports/")]
-df = df[~df[1].str.contains("/weather/")]
-df = df[~df[1].str.contains("/lifestyle/")]
-df = df[~df[1].str.contains("/travel/")]
-df = df[~df[1].str.contains("/health/")]
-df = df[~df[1].str.contains("/entertainment/")]
+df = df[~df[1].str.contains("/author/")]
+df = df[~df[1].str.contains("//twitter")]
+df = df[~df[1].str.contains("web.archive.org")]
+df = df[~df[1].str.contains("/email-protection")]
+# df = df[~df[1].str.contains("about-newsweek")]
+# df = df[~df[1].str.contains("/issue.html")]
+# df = df[~df[1].str.contains("//subscription")]
+# df = df[~df[1].str.contains("/newsletter/")]
 
 # sorting and duplicate removal
 df["length"] = df[1].str.len()
