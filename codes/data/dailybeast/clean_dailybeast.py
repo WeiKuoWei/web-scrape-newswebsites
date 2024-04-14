@@ -12,10 +12,14 @@ df = df[~df[1].str.contains("/author/")]
 df = df[~df[1].str.contains("//twitter")]
 df = df[~df[1].str.contains("web.archive.org")]
 df = df[~df[1].str.contains("/email-protection")]
-# df = df[~df[1].str.contains("about-newsweek")]
-# df = df[~df[1].str.contains("/issue.html")]
-# df = df[~df[1].str.contains("//subscription")]
-# df = df[~df[1].str.contains("/newsletter/")]
+df = df[~df[1].str.contains("/galleries/")]
+df = df[~df[1].str.contains("/videos/")]
+df = df[~df[1].str.contains("/franchise/")]
+df = df[~df[1].str.contains("/contributors/")]
+df = df[~df[1].str.contains("/category/")]
+df = df[~df[1].str.contains("coupons")]
+df = df[~df[1].str.contains("subscribe.html")]
+
 
 # sorting and duplicate removal
 df["length"] = df[1].str.len()
