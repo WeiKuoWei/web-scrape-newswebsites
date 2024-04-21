@@ -1,8 +1,12 @@
+# files
 .DS_Store
 .env
 *.pyc
 settings.json
+articles.json
 
+# directory
+.venv
 venv
 chromedriver-mac-arm64
 local_resource
