@@ -147,7 +147,7 @@
                 "end_year":2023
             }
         },
-        "base_url":"https://www.theatlantic.com/"
+        "base_url":"www.theatlantic.com/"
     },
     "foxnews_science":{
         "url":{
@@ -158,6 +158,21 @@
             }
         },
         "base_url":"foxnews.com/"
+    },
+    "slate_science":{
+        "url":{
+            "0":{
+                "link":"http://www.slate.com/articles/technology.html",
+                "start_year":2013,
+                "end_year":2018
+            },
+            "1":{
+                "link":"https://slate.com/technology",
+                "start_year":2018,
+                "end_year":2023
+            }
+        },
+        "base_url":"slate.com/"
     }
 }
     
