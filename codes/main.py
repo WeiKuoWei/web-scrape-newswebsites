@@ -3,16 +3,11 @@ import json
 import concurrent.futures
 import sys
 import pandas as pd
-# from geturls import getURLS
-# from geturls_soup import getURLS
 
-from geturls_soup_parallel_02 import getURLS
-from getarticles_v2 import fetch_articles_in_threads
-from wayback_machine import getArchiveURL
+from codes.getSoupParallel import getURLS
+from codes.getArticles import fetch_articles_in_threads
+from codes.waybackMachine import getArchiveURL
 
-
-# START_YEAR = 2023
-# END_YEAR = 2023
 current_time = time.time()
 # site_list = ["bbc", "cnn","foxnews","nationalreview","nytimes", "dailybeast", "washingtontimes", "newsweek"]    
 # site_list = ["dailybeast", "washingtontimes", "newsweek"]    
@@ -33,7 +28,6 @@ def fetch_urls(site):
     global sites
     print(site, sites[site]['base_url'])
     try:        
-        # print(f"Processing site: {site}", flush=True)  # Debugging print statement
         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
         updateTime("getURLS for " + site)
     except Exception as e:
@@ -108,13 +102,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# 1812 articles for 1761 seconds
-# roughly 25% of the urls are video urls
-
-# notes
-
-'''
-
-'''

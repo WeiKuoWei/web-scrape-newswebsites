@@ -4,6 +4,7 @@
 *.pyc
 settings.json
 articles.json
+News_Category_Dataset_v3.json
 
 # directory
 .venv

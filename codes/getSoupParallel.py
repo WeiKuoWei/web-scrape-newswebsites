@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from log_tracker import exportLog
+from codes.logTracker import exportLog
 import requests
 import aiohttp
 import asyncio
