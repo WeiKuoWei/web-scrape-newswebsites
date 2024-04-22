@@ -15,7 +15,8 @@ from wayback_machine import getArchiveURL
 # END_YEAR = 2023
 current_time = time.time()
 # site_list = ["bbc", "cnn","foxnews","nationalreview","nytimes", "dailybeast", "washingtontimes", "newsweek"]    
-site_list = ["dailybeast", "washingtontimes", "newsweek"]    
+# site_list = ["dailybeast", "washingtontimes", "newsweek"]    
+site_list = ["cnn_science", "newsweek_science", "washingtontimes_science", "theatlantic_science", "foxnews_science"]
 
 # Load the data from the JSON file
 with open('sites.json', 'r') as f:
@@ -65,7 +66,7 @@ def main():
                 
                 updateTime("getArchiveURL")
 
-        # for site in site_list[2:3]:
+        # for site in site_list:
         #     try:
         #         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
         #     except Exception as e:
@@ -95,10 +96,10 @@ def main():
             else:
                 break
 
-        # # get articles
-        # for site in site_list:
-        #     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-        #         executor.map(fetch_articles, site)
+        # get articles
+        for site in site_list:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                executor.map(fetch_articles, site)
     
     except Exception as e:
         print("Error: ", e)
