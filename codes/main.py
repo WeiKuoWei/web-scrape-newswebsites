@@ -4,14 +4,15 @@ import concurrent.futures
 import sys
 import pandas as pd
 
-from codes.getSoupParallel import getURLS
-from codes.getArticles import fetch_articles_in_threads
-from codes.waybackMachine import getArchiveURL
+from getSoupParallel import getURLS
+from getArticles import fetch_articles_in_threads
+from waybackMachine import getArchiveURL
 
 current_time = time.time()
 # site_list = ["bbc", "cnn","foxnews","nationalreview","nytimes", "dailybeast", "washingtontimes", "newsweek"]    
 # site_list = ["dailybeast", "washingtontimes", "newsweek"]    
-site_list = ["cnn_science", "newsweek_science", "washingtontimes_science", "theatlantic_science", "foxnews_science"]
+# site_list = ["cnn_science", "newsweek_science", "washingtontimes_science", "theatlantic_science", "foxnews_science"]
+site_list = ["slate_science"]
 
 # Load the data from the JSON file
 with open('sites.json', 'r') as f:
@@ -60,40 +61,39 @@ def main():
                 
                 updateTime("getArchiveURL")
 
-        # for site in site_list:
-        #     try:
-        #         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
-        #     except Exception as e:
-        #         print("Error: ", e, "; finishing using scraperapi credits")
-
-        # multi-thread using ThreadPoolExecutor
-        while True:
-            flag = False
-            try:
-                for site in site_list:
-                    df = pd.read_csv("data/"+site+"/urls-wayback.csv", header=None, encoding='utf-8')
-                    # if the third column contains entries that are not yes, set flag to True
-                    if len(df.columns) >= 3 and ("no" in df[2].values or "fail" in df[2].values):
-                        flag = True
-                        break
-
-            except Exception as e:
-                print("Error: ", e)
-                flag = True
-
-            if flag:
-                # use ProcessPoolExecutor to execute fetch_urls in parallel
-                with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-                    executor.map(fetch_urls, site_list)
-                updateTime("Finish getURLS")
-
-            else:
-                break
-
-        # get articles
         for site in site_list:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-                executor.map(fetch_articles, site)
+            try:
+                getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
+            except Exception as e:
+                print("Error: ", e, "; finishing using scraperapi credits")
+
+        # # multi-thread using ThreadPoolExecutor
+        # while True:
+        #     flag = False
+        #     try:
+        #         for site in site_list:
+        #             df = pd.read_csv("data/"+site+"/urls-wayback.csv", header=None, encoding='utf-8')
+        #             # if the third column contains entries that are not yes, set flag to True
+        #             if len(df.columns) >= 3 and ("no" in df[2].values or "fail" in df[2].values):
+        #                 flag = True
+        #                 break
+
+        #     except Exception as e:
+        #         print("Error: ", e)
+        #         flag = True
+
+        #     if flag:
+        #         # use ProcessPoolExecutor to execute fetch_urls in parallel
+        #         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        #             executor.map(fetch_urls, site_list)
+        #         updateTime("Finish getURLS")
+
+        #     else:
+        #         break
+
+        # # get articles
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        #     executor.map(fetch_articles, site_list)
     
     except Exception as e:
         print("Error: ", e)

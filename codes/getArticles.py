@@ -67,11 +67,11 @@ def fetch_articles_in_threads(site, num_threads=5):
             all_articles[url] = article
             # Write article to JSON if successfully fetched
             # if status == 'yes':
-            #     json_file_path = f"data/{site}/articles_new.json"
+            #     json_file_path = f"data/{site}/articles.json"
             #     with open(json_file_path, "a", encoding='utf-8') as file:
             #         json.dump(all_articles, file, ensure_ascii=False, indent=4)
         
-        json_file_path = f"data/{site}/articles_new.json"
+        json_file_path = f"data/{site}/articles.json"
 
         try:
             with open(json_file_path, "r", encoding='utf-8') as file:
