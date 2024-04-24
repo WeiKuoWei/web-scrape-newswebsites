@@ -9,20 +9,33 @@ old_len = len(df)
 df = df[df[1].str.len() >= 60]
 # df = df[df[1].str.contains("us")]
 
+df_a = df[df[1].str.contains("/articles/technology")]
+df_b = df[df[1].str.contains("/blogs/future_tense")]
+df_c = df[df[1].str.contains("/blogs/bad_astronomy")]
+
 # negative filtering
 df = df[~df[1].str.contains("/topics/")]
 df = df[~df[1].str.contains("/staff/")]
 df = df[~df[1].str.contains("/subscribe/")]
-df = df[~df[1].str.contains("/sponsored/")]
-df = df[~df[1].str.contains("/specials/")]
-df = df[~df[1].str.contains("/opinion/")]
-df = df[~df[1].str.contains("/accounts/")]
 df = df[~df[1].str.contains("/foryou/")]
 df = df[~df[1].str.contains("/human-interest/")]
 df = df[~df[1].str.contains("/content/")]
 df = df[~df[1].str.contains("/culture/")]
 df = df[~df[1].str.contains("/podcasts/")]
 df = df[~df[1].str.contains("/authors.")]
+df = df[~df[1].str.contains("/briefing/")]
+df = df[~df[1].str.contains("/business/")]
+df = df[~df[1].str.contains("/news-and-politics/")]
+df = df[~df[1].str.contains("/news_and_politics/")]
+df = df[~df[1].str.contains("/movies.")]
+df = df[~df[1].str.contains("/blogs/")]
+df = df[~df[1].str.contains("/articles/")]
+df = df[~df[1].str.contains("/sidebars/")]
+
+# combine dfs
+df = pd.concat([df, df_a, df_b, df_c])
+
+
 
 
 # sorting and duplicate removal
