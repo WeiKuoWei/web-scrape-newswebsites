@@ -46,26 +46,26 @@ def main():
     print("Program started")
         
     try:
-        # wayback machine
-        for site in site_list:
-            url_num = len(sites[site]['url'])
-            for i in range(url_num):
-                i = str(i)
-                url_link = sites[site]['url'][i]["link"]
-                start_year = sites[site]['url'][i]["start_year"]
-                end_year = sites[site]['url'][i]["end_year"]
-                export_csv_path = "data/"+site+"/urls-wayback.csv"
+        # # wayback machine
+        # for site in site_list:
+        #     url_num = len(sites[site]['url'])
+        #     for i in range(url_num):
+        #         i = str(i)
+        #         url_link = sites[site]['url'][i]["link"]
+        #         start_year = sites[site]['url'][i]["start_year"]
+        #         end_year = sites[site]['url'][i]["end_year"]
+        #         export_csv_path = "data/"+site+"/urls-wayback.csv"
 
-                # get archive urls with wayback machine
-                getArchiveURL(url_link, start_year, end_year, export_csv_path)
+        #         # get archive urls with wayback machine
+        #         getArchiveURL(url_link, start_year, end_year, export_csv_path)
                 
-                updateTime("getArchiveURL")
+        #         updateTime("getArchiveURL")
 
-        for site in site_list:
-            try:
-                getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
-            except Exception as e:
-                print("Error: ", e, "; finishing using scraperapi credits")
+        # for site in site_list:
+        #     try:
+        #         getURLS("urls-wayback.csv", "urls_uncleaned.csv", site, sites[site]['base_url'])
+        #     except Exception as e:
+        #         print("Error: ", e, "; finishing using scraperapi credits")
 
         # # multi-thread using ThreadPoolExecutor
         # while True:
@@ -91,9 +91,9 @@ def main():
         #     else:
         #         break
 
-        # # get articles
-        # with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-        #     executor.map(fetch_articles, site_list)
+        # get articles
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            executor.map(fetch_articles, site_list)
     
     except Exception as e:
         print("Error: ", e)
