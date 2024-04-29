@@ -2,6 +2,7 @@
 .DS_Store
 .env
 *.pyc
+*categorized.json
 settings.json
 articles.json
 News_Category_Dataset_v3.json
