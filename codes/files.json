@@ -1,0 +1,12 @@
+{
+    "theatlantic_science.json": "data/categorized/theatlantic_science.json",
+    "cnn.json": "data/categorized/cnn.json",
+    "washingtontimes_science.json": "data/categorized/washingtontimes_science.json",
+    "slate_science.json": "data/categorized/slate_science.json",
+    "foxnews.json": "data/categorized/foxnews.json",
+    "newsweek_science.json": "data/categorized/newsweek_science.json",
+    "newsweek.json": "data/categorized/newsweek.json",
+    "foxnews_science.json": "data/categorized/foxnews_science.json",
+    "washingtontimes.json": "data/categorized/washingtontimes.json",
+    "dailybeast.json": "data/categorized/dailybeast.json"
+}

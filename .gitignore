@@ -9,6 +9,7 @@ News_Category_Dataset_v3.json
 
 # directory
 .venv
+categorized
 venv
 chromedriver-mac-arm64
 local_resource
